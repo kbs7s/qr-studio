@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0f766e"/>
+  <g fill="#ffffff">
+    <path fill-rule="evenodd" d="M112 96h104a16 16 0 0 1 16 16v104a16 16 0 0 1-16 16H112a16 16 0 0 1-16-16V112a16 16 0 0 1 16-16zm24 40v56h56v-56z"/>
+    <path fill-rule="evenodd" d="M296 96h104a16 16 0 0 1 16 16v104a16 16 0 0 1-16 16H296a16 16 0 0 1-16-16V112a16 16 0 0 1 16-16zm24 40v56h56v-56z"/>
+    <path fill-rule="evenodd" d="M112 280h104a16 16 0 0 1 16 16v104a16 16 0 0 1-16 16H112a16 16 0 0 1-16-16V296a16 16 0 0 1 16-16zm24 40v56h56v-56z"/>
+    <circle cx="300" cy="300" r="20"/>
+    <circle cx="396" cy="300" r="20"/>
+    <circle cx="348" cy="348" r="20"/>
+    <circle cx="300" cy="396" r="20"/>
+    <circle cx="396" cy="396" r="20"/>
+  </g>
+</svg>
