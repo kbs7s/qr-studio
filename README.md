@@ -11,14 +11,20 @@ device; nothing is uploaded.
 
 **Create · إنشاء**
 - Link, text, Wi‑Fi, contact (vCard), email, SMS, phone call and map location
+- Other barcodes: EAN‑13, EAN‑8, UPC‑A, UPC‑E, Code 128, Code 39, ITF‑14, Data Matrix, PDF417, Aztec
 - Colors and gradients, dot shapes, corner shapes, a logo in the middle, error correction level, quiet zone
-- Download as PNG, share (on phones), copy the encoded content
+- Download as PNG or SVG in four sizes, share (on phones), copy the encoded content
+- Print a sheet of 1–20 copies with a caption (handy for Wi‑Fi cards)
 - Warns when colors are too low‑contrast to scan reliably
 
 **Scan · مسح**
-- Live camera scanning (pick front/back camera)
+- Live camera scanning (pick front/back camera, light and zoom where the phone supports it)
+- Reads QR and common barcodes; product codes get a "search the web" button
 - Scan a photo or screenshot: choose a file, drag it in, or paste it
 - Understands Wi‑Fi, contacts, email, SMS, phone, location and links, with one‑tap actions (copy password, save contact, call, open map…)
+
+**History · السجل**
+- Everything you scan or download is kept on the device (last 100), with search, filters, reopen and delete
 
 **App · التطبيق**
 - Installable on Android, iPhone and desktop (Progressive Web App)
@@ -48,6 +54,7 @@ Plain HTML, CSS and JavaScript with no build step. Libraries are vendored in
 - [node-qrcode](https://github.com/soldair/node-qrcode): checks capacity and reports version/size
 - [html5-qrcode](https://github.com/mebjas/html5-qrcode): live camera scanning
 - [zxing-js/library](https://github.com/zxing-js/library): decoding images (after the browser's own `BarcodeDetector` when available)
+- [bwip-js](https://github.com/metafloor/bwip-js): drawing the non‑QR barcodes
 
 Ideas also came from [segno](https://github.com/heuer/segno),
 [pretty_qr_code](https://github.com/yeeroman/pretty_qr_code),
