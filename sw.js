@@ -1,6 +1,6 @@
 /* QR Studio service worker: precache the app shell so it works offline.
  * Bump VERSION whenever any cached file changes. */
-const VERSION = 'qr-studio-v1';
+const VERSION = 'qr-studio-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -13,6 +13,7 @@ const ASSETS = [
   './vendor/qr-code-styling.js',
   './vendor/zxing.min.js',
   './vendor/html5-qrcode.min.js',
+  './vendor/bwip-js.min.js',
   './icons/icon.svg',
   './icons/icon-192.png',
   './icons/icon-512.png',

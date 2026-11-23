@@ -80,6 +80,8 @@
       return num ? 'tel:' + num : '';
     },
 
+    barcode: function (f) { return f.value == null ? '' : String(f.value).trim(); },
+
     geo: function (f) {
       var lat = parseFloat(f.lat), lng = parseFloat(f.lng);
       if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return '';

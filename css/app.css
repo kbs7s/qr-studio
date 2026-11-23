@@ -72,7 +72,7 @@ h2 { font-size: 1.05rem; font-weight: 650; }
 /* ---------- tabs ---------- */
 .tabs {
   display: flex; gap: 4px; padding: 4px;
-  max-width: 420px; margin: 8px auto 12px;
+  max-width: 480px; margin: 8px auto 12px;
   background: var(--surface-2); border-radius: 999px;
   position: sticky; top: 8px; z-index: 5;
   box-shadow: var(--shadow);
@@ -119,7 +119,7 @@ main { max-width: 1120px; margin: 0 auto; padding: 0 16px 24px; }
 /* ---------- form controls ---------- */
 fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 label { display: flex; flex-direction: column; gap: 6px; font-size: .88rem; color: var(--muted); font-weight: 550; min-width: 0; }
-input[type="text"], input[type="url"], input[type="email"], input[type="tel"], input[type="number"], input[type="password"], textarea, select {
+input[type="text"], input[type="search"], input[type="url"], input[type="email"], input[type="tel"], input[type="number"], input[type="password"], textarea, select {
   font: inherit; color: var(--text); background: var(--surface);
   border: 1px solid var(--border); border-radius: var(--radius-sm);
   padding: 10px 12px; width: 100%; min-height: 44px;
@@ -268,3 +268,42 @@ html[dir="rtl"] .result-fields dd[dir="ltr"] { text-align: right; }
 @media (prefers-reduced-motion: no-preference) {
   .btn, .tab, .type-chips button, .shape { transition: background-color .15s, color .15s, border-color .15s; }
 }
+
+/* ---------- export / print ---------- */
+.export-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.print-box summary { display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; color: var(--accent); font-weight: 600; font-size: .92rem; list-style: none; min-height: 40px; }
+.print-box summary::-webkit-details-marker { display: none; }
+.print-opts { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 10px; align-items: end; margin-top: 8px; }
+.print-opts .btn { grid-column: 1 / -1; }
+.print-area { display: none; }
+
+/* ---------- camera tools ---------- */
+.cam-tools { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+.cam-tools .zoom { flex: 1 1 180px; max-width: 320px; }
+#torchBtn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+/* ---------- history ---------- */
+.history-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.history-head .btn.armed { color: var(--danger); background: transparent; }
+.history-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.history-item { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 12px; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.history-item .h-icon { grid-row: span 2; width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); }
+.history-item .h-title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-item .h-meta { color: var(--muted); font-size: .8rem; }
+.history-item .h-actions { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+.history-item .h-actions .btn { min-height: 36px; padding: 6px 12px; font-size: .85rem; }
+
+/* ---------- printing ---------- */
+@media print {
+  @page { size: A4; margin: 12mm; }
+  body { background: #fff; }
+  body > *:not(.print-area) { display: none !important; }
+  .print-area { display: grid !important; gap: 8mm; grid-template-columns: repeat(var(--cols, 2), 1fr); }
+  .print-cell { break-inside: avoid; text-align: center; color: #000; font-family: var(--font); }
+  .print-cell img { width: 100%; height: auto; display: block; }
+  .print-cell p { margin: 2mm 0 0; font-size: 11pt; font-weight: 600; }
+}
+.qr-box { width: 100%; }
+.qr-holder.is-barcode { aspect-ratio: auto; max-width: 420px; }
+.qr-holder.is-barcode canvas { max-width: 420px; border-radius: 4px; }
+html[dir="rtl"] .history-item .h-title { text-align: right; }

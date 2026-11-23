@@ -42,6 +42,10 @@
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3M7 12h10"/></svg>
       <span data-i18n="tabScan">Scan</span>
     </button>
+    <button type="button" role="tab" id="tab-history" aria-controls="panel-history" aria-selected="false" class="tab">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5M12 7v5l3 3"/></svg>
+      <span data-i18n="tabHistory">History</span>
+    </button>
   </nav>
 
   <div id="banner" class="banner" hidden role="status"></div>
@@ -59,6 +63,7 @@
           <button type="button" role="radio" data-type="sms" data-i18n="typeSms">SMS</button>
           <button type="button" role="radio" data-type="phone" data-i18n="typePhone">Phone</button>
           <button type="button" role="radio" data-type="geo" data-i18n="typeGeo">Location</button>
+          <button type="button" role="radio" data-type="barcode" data-i18n="typeBarcode">Barcode</button>
         </div>
 
         <form id="dataForm" class="data-form" autocomplete="off" onsubmit="return false">
@@ -133,6 +138,25 @@
               <span data-i18n="useMyLocation">Use my location</span></button>
             <p class="hint" id="locateMsg" role="status"></p>
           </fieldset>
+
+          <fieldset data-form="barcode" hidden>
+            <label><span data-i18n="bcFormat">Barcode type</span>
+              <select name="format" id="bcFormat">
+                <option value="ean13">EAN‑13</option>
+                <option value="ean8">EAN‑8</option>
+                <option value="upca">UPC‑A</option>
+                <option value="upce">UPC‑E</option>
+                <option value="code128" selected>Code 128</option>
+                <option value="code39">Code 39</option>
+                <option value="itf14">ITF‑14</option>
+                <option value="datamatrix">Data Matrix</option>
+                <option value="pdf417">PDF417</option>
+                <option value="azteccode">Aztec</option>
+              </select></label>
+            <label><span data-i18n="bcValue">Value</span>
+              <input type="text" name="value" dir="ltr" value="QR-STUDIO-2026"></label>
+            <p class="hint" id="bcHint"></p>
+          </fieldset>
         </form>
       </div>
 
@@ -143,10 +167,24 @@
         </div>
         <p class="qr-info" id="qrInfo" aria-live="polite"></p>
         <p class="warn" id="qrWarn" hidden></p>
+        <div class="export-row">
+          <label><span data-i18n="exportFormat">File type</span>
+            <select id="exportFormat">
+              <option value="png">PNG</option>
+              <option value="svg">SVG</option>
+            </select></label>
+          <label><span data-i18n="exportSize">Size</span>
+            <select id="exportSize">
+              <option value="512" data-i18n="sizeSmall">Small (512 px)</option>
+              <option value="1200" selected data-i18n="sizeMedium">Medium (1200 px)</option>
+              <option value="2400" data-i18n="sizeLarge">Print (2400 px)</option>
+              <option value="4000" data-i18n="sizeHuge">Poster (4000 px)</option>
+            </select></label>
+        </div>
         <div class="actions">
           <button type="button" class="btn btn-primary" id="downloadBtn">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
-            <span data-i18n="download">Download PNG</span></button>
+            <span data-i18n="download">Download</span></button>
           <button type="button" class="btn" id="shareBtn" hidden>
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>
             <span data-i18n="share">Share</span></button>
@@ -154,12 +192,30 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="13" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"/></svg>
             <span data-i18n="copyText">Copy content</span></button>
         </div>
+        <details class="print-box">
+          <summary>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>
+            <span data-i18n="printSheet">Print a sheet</span></summary>
+          <div class="print-opts">
+            <label><span data-i18n="printCopies">Copies on the page</span>
+              <select id="printCopies">
+                <option value="1">1</option>
+                <option value="4">4</option>
+                <option value="6" selected>6</option>
+                <option value="12">12</option>
+                <option value="20">20</option>
+              </select></label>
+            <label><span data-i18n="caption">Caption under each code</span>
+              <input type="text" id="printCaption" dir="auto" data-i18n-ph="captionPh"></label>
+            <button type="button" class="btn" id="printBtn"><span data-i18n="print">Print</span></button>
+          </div>
+        </details>
       </div>
 
       <div class="card area-style">
         <h2 data-i18n="style">Style</h2>
 
-        <div class="field-group">
+        <div class="field-group" data-qr-only>
           <span class="group-label" data-i18n="presets">Quick looks</span>
           <div class="presets" id="presets"></div>
         </div>
@@ -168,21 +224,21 @@
           <span class="group-label" data-i18n="colors">Colors</span>
           <div class="colors">
             <label class="color"><input type="color" id="fgColor" value="#0f172a"><span data-i18n="fg">Dots</span></label>
-            <label class="color"><input type="color" id="cornerColor" value="#0f766e"><span data-i18n="cornerColor">Corners</span></label>
+            <label class="color" data-qr-only><input type="color" id="cornerColor" value="#0f766e"><span data-i18n="cornerColor">Corners</span></label>
             <label class="color"><input type="color" id="bgColor" value="#ffffff"><span data-i18n="bg">Background</span></label>
           </div>
-          <div class="row-checks">
+          <div class="row-checks" data-qr-only>
             <label class="check"><input type="checkbox" id="useGradient"><span data-i18n="gradient">Gradient</span></label>
             <label class="color inline" id="gradWrap" hidden><input type="color" id="gradColor" value="#0f766e"><span data-i18n="gradientColor">Second color</span></label>
             <label class="check"><input type="checkbox" id="transparentBg"><span data-i18n="transparentBg">Transparent background</span></label>
           </div>
         </div>
 
-        <div class="field-group">
+        <div class="field-group" data-qr-only>
           <span class="group-label" data-i18n="dotShape">Dot shape</span>
           <div class="shape-picker" id="dotShapes" role="radiogroup"></div>
         </div>
-        <div class="two">
+        <div class="two" data-qr-only>
           <div class="field-group">
             <span class="group-label" data-i18n="cornerShape">Corner shape</span>
             <div class="shape-picker small" id="cornerShapes" role="radiogroup"></div>
@@ -193,7 +249,7 @@
           </div>
         </div>
 
-        <div class="field-group">
+        <div class="field-group" data-qr-only>
           <span class="group-label" data-i18n="logo">Logo</span>
           <div class="logo-row">
             <label class="btn file-btn">
@@ -210,7 +266,7 @@
           </div>
         </div>
 
-        <div class="two">
+        <div class="two" data-qr-only>
           <label><span data-i18n="errorLevel">Error correction</span>
             <select id="ecLevel">
               <option value="L" data-i18n="ecL">Low (7%)</option>
@@ -221,7 +277,7 @@
           <label class="range"><span data-i18n="margin">Quiet zone</span>
             <input type="range" id="margin" min="0" max="40" step="2" value="16"></label>
         </div>
-        <p class="hint" data-i18n="ecHint">Higher levels survive damage and logos better, but make denser codes.</p>
+        <p class="hint" data-qr-only data-i18n="ecHint">Higher levels survive damage and logos better, but make denser codes.</p>
 
         <button type="button" class="btn btn-ghost" id="resetStyle">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>
@@ -241,6 +297,13 @@
           <div class="vf-idle" id="vfIdle">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8V5a2 2 0 0 1 2-2h3M16 3h3a2 2 0 0 1 2 2v3M21 16v3a2 2 0 0 1-2 2h-3M8 21H5a2 2 0 0 1-2-2v-3"/><circle cx="12" cy="12" r="3"/></svg>
           </div>
+        </div>
+        <div class="cam-tools" id="camTools" hidden>
+          <button type="button" class="btn" id="torchBtn" hidden aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>
+            <span data-i18n="torch">Light</span></button>
+          <label class="range zoom" id="zoomWrap" hidden><span data-i18n="zoom">Zoom</span>
+            <input type="range" id="zoomRange"></label>
         </div>
         <p class="hint center" id="camMsg" role="status"></p>
         <div class="actions">
@@ -274,7 +337,28 @@
         </details>
       </div>
     </section>
+
+    <!-- ================= HISTORY ================= -->
+    <section id="panel-history" role="tabpanel" aria-labelledby="tab-history" class="panel" hidden>
+      <div class="card">
+        <div class="history-head">
+          <h2 data-i18n="history">History</h2>
+          <button type="button" class="btn btn-ghost" id="clearHistory" data-i18n="clearHistory">Clear all</button>
+        </div>
+        <input type="search" id="historySearch" dir="auto" data-i18n-ph="searchHistory" data-i18n-label="searchHistory">
+        <div class="type-chips" role="radiogroup" id="historyFilter">
+          <button type="button" role="radio" data-filter="all" aria-checked="true" data-i18n="filterAll">All</button>
+          <button type="button" role="radio" data-filter="scan" data-i18n="filterScanned">Scanned</button>
+          <button type="button" role="radio" data-filter="create" data-i18n="filterCreated">Created</button>
+        </div>
+        <ul class="history-list" id="historyList"></ul>
+        <p class="hint center" id="historyEmpty" data-i18n="noHistory">Nothing here yet.</p>
+        <p class="hint center" data-i18n="historyNote">History stays on this device only.</p>
+      </div>
+    </section>
   </main>
+
+  <div id="printArea" class="print-area" aria-hidden="true"></div>
 
   <footer class="footer"><span data-i18n="footer">Everything runs on your device. Nothing is uploaded.</span></footer>
 
@@ -283,6 +367,7 @@
   <script src="vendor/qrcode.min.js"></script>
   <script src="vendor/qr-code-styling.js"></script>
   <script src="vendor/zxing.min.js"></script>
+  <script src="vendor/bwip-js.min.js"></script>
   <script src="vendor/html5-qrcode.min.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/payloads.js"></script>
