@@ -7,6 +7,45 @@ device; nothing is uploaded.
 أنشئ رموز QR بتصاميم مختلفة واقرأها على الهاتف أو الحاسوب، حتى بدون إنترنت.
 يدعم العربية والإنجليزية. كل شيء يعمل على جهازك ولا يتم رفع أي بيانات.
 
+## Open the app · افتح التطبيق
+
+**https://kbs7s.github.io/qr-studio/**
+
+<img src="docs/app-qr.png" alt="QR code for the app link" width="160">
+
+## Install on your phone · التثبيت على الهاتف
+
+**Android (Chrome)**
+1. Open the link above in Chrome.
+2. Tap **Install app** at the top, or open the ⋮ menu and choose **Install app** / **Add to Home screen**.
+3. Confirm. The QR Studio icon appears on your home screen.
+
+**iPhone / iPad (Safari)**
+1. Open the link in Safari.
+2. Tap the **Share** button (square with an arrow).
+3. Scroll down, tap **Add to Home Screen**, then **Add**.
+
+**Computer (Chrome or Edge):** open the link and click the install icon at the end of the address bar.
+
+**أندرويد (Chrome)**
+1. افتح الرابط أعلاه في متصفح Chrome.
+2. اضغط **تثبيت التطبيق** في الأعلى، أو افتح القائمة ⋮ واختر **تثبيت التطبيق** أو **إضافة إلى الشاشة الرئيسية**.
+3. أكّد التثبيت، وستظهر أيقونة استوديو QR على الشاشة الرئيسية.
+
+**آيفون / آيباد (Safari)**
+1. افتح الرابط في متصفح Safari.
+2. اضغط زر **المشاركة** (المربع الذي فيه سهم).
+3. انزل للأسفل واضغط **إضافة إلى الشاشة الرئيسية** ثم **إضافة**.
+
+**الحاسوب (Chrome أو Edge):** افتح الرابط واضغط أيقونة التثبيت في نهاية شريط العنوان.
+
+After installing, the app works without internet and updates itself. The same
+steps are inside the app under **How to install** (or open
+`https://kbs7s.github.io/qr-studio/#install`).
+
+بعد التثبيت يعمل التطبيق بدون إنترنت ويتحدّث تلقائياً. تجد نفس الخطوات داخل التطبيق
+تحت **طريقة التثبيت**.
+
 ## What it does · الميزات
 
 **Create · إنشاء**
