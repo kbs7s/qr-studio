@@ -1,6 +1,6 @@
 /* QR Studio — build QR payload strings and parse scanned ones.
  * Formats follow the de-facto standards most phone cameras understand
- * (ZXing "barcode contents" conventions, vCard 3.0, RFC 6068 mailto, RFC 5870 geo).
+ * (ZXing "barcode contents" conventions, vCard 3.0, RFC 6068 mailto, RFC 5870 geo, iCalendar VEVENT).
  */
 (function () {
   'use strict';
@@ -9,10 +9,8 @@
 
   // ---------- building ----------
 
-  // Wi-Fi: special characters \ ; , : " must be backslash-escaped.
   function escWifi(s) { return String(s).replace(/([\\;,:"])/g, '\\$1'); }
 
-  // vCard text values: escape \ , ; and newlines.
   function escVcard(s) {
     return String(s).replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1');
   }
@@ -25,6 +23,15 @@
   }
 
   function cleanPhone(p) { return trim(p).replace(/[^\d+*#]/g, ''); }
+
+  function toIcsDate(localDt) {
+    var v = trim(localDt);
+    if (!v) return '';
+    // Expects YYYY-MM-DDTHH:MM -> YYYYMMDDTHHMM00
+    var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(v);
+    if (!m) return '';
+    return m[1] + m[2] + m[3] + 'T' + m[4] + m[5] + '00';
+  }
 
   var build = {
     url: function (f) { return normalizeUrl(f.url); },
@@ -60,6 +67,15 @@
       return lines.join('\n');
     },
 
+    whatsapp: function (f) {
+      var digits = trim(f.waNumber).replace(/[^\d]/g, '');
+      if (!digits) return '';
+      var url = 'https://wa.me/' + digits;
+      var msg = trim(f.waMessage);
+      if (msg) url += '?text=' + encodeURIComponent(msg);
+      return url;
+    },
+
     email: function (f) {
       var to = trim(f.to);
       if (!to) return '';
@@ -80,22 +96,36 @@
       return num ? 'tel:' + num : '';
     },
 
-    barcode: function (f) { return f.value == null ? '' : String(f.value).trim(); },
-
     geo: function (f) {
       var lat = parseFloat(f.lat), lng = parseFloat(f.lng);
       if (!isFinite(lat) || !isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180) return '';
       var s = 'geo:' + round(lat) + ',' + round(lng);
       if (trim(f.label)) s += '?q=' + round(lat) + ',' + round(lng) + '(' + encodeURIComponent(trim(f.label)) + ')';
       return s;
-    }
+    },
+
+    event: function (f) {
+      var title = trim(f.eventTitle);
+      var start = toIcsDate(f.eventStart);
+      if (!title && !start) return '';
+      var lines = ['BEGIN:VEVENT'];
+      if (title) lines.push('SUMMARY:' + escVcard(title));
+      if (start) lines.push('DTSTART:' + start);
+      var end = toIcsDate(f.eventEnd);
+      if (end) lines.push('DTEND:' + end);
+      if (trim(f.eventLocation)) lines.push('LOCATION:' + escVcard(trim(f.eventLocation)));
+      if (trim(f.eventDesc)) lines.push('DESCRIPTION:' + escVcard(trim(f.eventDesc)));
+      lines.push('END:VEVENT');
+      return lines.join('\n');
+    },
+
+    barcode: function (f) { return f.value == null ? '' : String(f.value).trim(); }
   };
 
   function round(n) { return Math.round(n * 1e6) / 1e6; }
 
   // ---------- parsing ----------
 
-  // Split "K:v;K:v;;" respecting backslash escapes.
   function splitFields(body) {
     var out = {}, key = '', val = '', inKey = true;
     for (var i = 0; i < body.length; i++) {
@@ -121,7 +151,7 @@
   }
 
   function parseVcard(raw) {
-    var text = raw.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, ''); // unfold
+    var text = raw.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
     var c = { phones: [], emails: [], urls: [] };
     text.split('\n').forEach(function (line) {
       var idx = line.indexOf(':');
@@ -159,6 +189,31 @@
     };
   }
 
+  function formatIcsDate(v) {
+    var m = /^(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/.exec(trim(v));
+    if (!m) return v;
+    return m[1] + '-' + m[2] + '-' + m[3] + (m[4] ? ' ' + m[4] + ':' + m[5] : '');
+  }
+
+  function parseEvent(raw) {
+    var text = raw.replace(/\r\n/g, '\n').replace(/\n[ \t]/g, '');
+    var ev = { title: '', start: '', end: '', location: '', description: '' };
+    text.split('\n').forEach(function (line) {
+      var idx = line.indexOf(':');
+      if (idx < 0) return;
+      var key = line.slice(0, idx).split(';')[0].toUpperCase();
+      var val = line.slice(idx + 1);
+      switch (key) {
+        case 'SUMMARY': ev.title = unescVcard(val); break;
+        case 'DTSTART': ev.start = formatIcsDate(val); break;
+        case 'DTEND': ev.end = formatIcsDate(val); break;
+        case 'LOCATION': ev.location = unescVcard(val); break;
+        case 'DESCRIPTION': ev.description = unescVcard(val); break;
+      }
+    });
+    return ev;
+  }
+
   function safeDecode(s) {
     try { return decodeURIComponent(s.replace(/\+/g, '%20')); } catch (e) { return s; }
   }
@@ -182,6 +237,9 @@
     }
     if (up.indexOf('MECARD:') === 0) {
       var mc = parseMecard(t); mc.kind = 'contact'; mc.raw = s; return mc;
+    }
+    if (up.indexOf('BEGIN:VEVENT') >= 0) {
+      var ev = parseEvent(t); ev.kind = 'event'; ev.raw = s; ev.ics = t; return ev;
     }
     if (up.indexOf('MAILTO:') === 0) {
       var rest = t.slice(7), qi = rest.indexOf('?');
@@ -221,6 +279,10 @@
         return { kind: 'geo', raw: s, lat: parseFloat(g[1]), lng: parseFloat(g[2]), label: lm ? safeDecode(lm[1]) : '' };
       }
     }
+    var wa = /^https?:\/\/wa\.me\/(\d+)(?:\?text=(.*))?$/i.exec(t);
+    if (wa) {
+      return { kind: 'whatsapp', raw: s, number: '+' + wa[1], message: wa[2] ? safeDecode(wa[2]) : '', url: t };
+    }
     if (/^https?:\/\/\S+$/i.test(t)) {
       return { kind: 'url', raw: s, url: t };
     }
@@ -232,3 +294,4 @@
 
   window.Payloads = { build: build, parse: parse, normalizeUrl: normalizeUrl };
 })();
+

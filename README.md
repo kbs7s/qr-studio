@@ -49,7 +49,7 @@ steps are inside the app under **How to install** (or open
 ## What it does · الميزات
 
 **Create · إنشاء**
-- Link, text, Wi‑Fi, contact (vCard), email, SMS, phone call and map location
+- Link, text, Wi‑Fi, contact (vCard), WhatsApp, email, SMS, phone call, map location and calendar event
 - Other barcodes: EAN‑13, EAN‑8, UPC‑A, UPC‑E, Code 128, Code 39, ITF‑14, Data Matrix, PDF417, Aztec
 - Colors and gradients, dot shapes, corner shapes, a logo in the middle, error correction level, quiet zone
 - Download as PNG or SVG in four sizes, share (on phones), copy the encoded content
@@ -66,6 +66,7 @@ steps are inside the app under **How to install** (or open
 - Everything you scan or download is kept on the device (last 100), with search, filters, reopen and delete
 
 **App · التطبيق**
+- Dark and light themes
 - Installable on Android, iPhone and desktop (Progressive Web App)
 - Works fully offline after the first visit
 
