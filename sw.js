@@ -1,6 +1,6 @@
 /* QR Studio service worker: precache the app shell so it works offline.
  * Bump VERSION whenever any cached file changes. */
-const VERSION = 'qr-studio-v2';
+const VERSION = 'qr-studio-v3';
 const ASSETS = [
   './',
   './index.html',

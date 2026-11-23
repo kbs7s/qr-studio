@@ -307,3 +307,22 @@ html[dir="rtl"] .result-fields dd[dir="ltr"] { text-align: right; }
 .qr-holder.is-barcode { aspect-ratio: auto; max-width: 420px; }
 .qr-holder.is-barcode canvas { max-width: 420px; border-radius: 4px; }
 html[dir="rtl"] .history-item .h-title { text-align: right; }
+
+/* ---------- install guide ---------- */
+.link-btn { background: none; border: 0; padding: 4px 8px; font: inherit; color: var(--accent); text-decoration: underline; cursor: pointer; display: block; margin: 6px auto 0; min-height: 32px; }
+.install-dialog {
+  width: min(560px, calc(100% - 32px)); max-height: calc(100% - 32px);
+  border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
+  background: var(--surface); color: var(--text); box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.install-dialog::backdrop { background: rgba(5, 15, 14, .55); }
+.dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+.icon-btn { padding: 8px; min-width: 44px; color: var(--muted); }
+.install-step { border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px; }
+.install-step h3 { margin: 0 0 6px; font-size: .98rem; }
+.install-step ol { margin: 0; padding-inline-start: 22px; display: flex; flex-direction: column; gap: 4px; }
+.share-app { display: flex; gap: 16px; align-items: center; border-top: 1px solid var(--border); padding-top: 14px; margin: 14px 0 10px; flex-wrap: wrap; }
+.share-app > div:last-child { flex: 1 1 200px; display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.app-qr { width: 132px; height: 132px; flex: none; }
+.app-qr canvas { width: 100% !important; height: 100% !important; border-radius: 8px; }
+.app-url { margin: 0; font-weight: 600; overflow-wrap: anywhere; font-size: .88rem; }

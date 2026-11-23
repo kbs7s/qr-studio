@@ -974,10 +974,39 @@
     if (deferredPrompt) {
       deferredPrompt.prompt();
       deferredPrompt.userChoice.finally(function () { deferredPrompt = null; $('installBtn').hidden = true; });
-    } else if (isIOS) {
-      showBanner(t('iosInstall'));
+    } else {
+      openInstallHelp();
     }
   });
+
+  // Install guide dialog, with a QR code of the app's own address.
+  var APP_URL = location.origin + location.pathname.replace(/index\.html$/, '');
+  var appQr = null;
+  function openInstallHelp() {
+    var d = $('installDialog');
+    var platform = isIOS ? 'ios' : /android/i.test(navigator.userAgent) ? 'android' : 'desktop';
+    // Show the visitor's own platform first.
+    var first = d.querySelector('.install-step[data-platform="' + platform + '"]');
+    d.insertBefore(first, d.querySelector('.install-step'));
+    $('appUrl').textContent = APP_URL;
+    if (!appQr) {
+      appQr = new QRCodeStyling({
+        width: 360, height: 360, type: 'canvas', data: APP_URL, margin: 10,
+        qrOptions: { errorCorrectionLevel: 'M' },
+        dotsOptions: { type: 'rounded', color: '#0f172a' },
+        cornersSquareOptions: { type: 'extra-rounded', color: '#0f766e' },
+        cornersDotOptions: { type: 'dot', color: '#0f766e' },
+        backgroundOptions: { color: '#ffffff' }
+      });
+      appQr.append($('appQr'));
+    }
+    if (d.showModal) d.showModal(); else d.setAttribute('open', '');
+  }
+  $('helpBtn').addEventListener('click', openInstallHelp);
+  $('installClose').addEventListener('click', function () { $('installDialog').close ? $('installDialog').close() : $('installDialog').removeAttribute('open'); });
+  $('installDialog').addEventListener('click', function (e) { if (e.target === e.currentTarget && e.currentTarget.close) e.currentTarget.close(); });
+  $('copyAppUrl').addEventListener('click', function () { copy(APP_URL); });
+  if (location.hash === '#install') setTimeout(openInstallHelp, 300);
 
   function showBanner(text, actionLabel, action) {
     var b = $('banner');

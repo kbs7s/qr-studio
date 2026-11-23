@@ -360,7 +360,53 @@
 
   <div id="printArea" class="print-area" aria-hidden="true"></div>
 
-  <footer class="footer"><span data-i18n="footer">Everything runs on your device. Nothing is uploaded.</span></footer>
+  <footer class="footer">
+    <span data-i18n="footer">Everything runs on your device. Nothing is uploaded.</span>
+    <button type="button" class="link-btn" id="helpBtn" data-i18n="howInstall">How to install</button>
+  </footer>
+
+  <dialog id="installDialog" class="install-dialog" aria-labelledby="installTitle">
+    <div class="dialog-head">
+      <h2 id="installTitle" data-i18n="howInstall">How to install</h2>
+      <button type="button" class="btn btn-ghost icon-btn" id="installClose" data-i18n-label="close">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <p class="hint" data-i18n="installIntro">Install QR Studio like a normal app. It opens full screen and works without internet.</p>
+
+    <section class="install-step" data-platform="android">
+      <h3 data-i18n="pfAndroid">Android (Chrome)</h3>
+      <ol>
+        <li data-i18n="android1">Open the app link in Chrome.</li>
+        <li data-i18n="android2">Tap “Install app” at the top, or open the ⋮ menu and choose “Install app” / “Add to Home screen”.</li>
+        <li data-i18n="android3">Confirm. The QR Studio icon appears on your home screen.</li>
+      </ol>
+    </section>
+    <section class="install-step" data-platform="ios">
+      <h3 data-i18n="pfIos">iPhone / iPad (Safari)</h3>
+      <ol>
+        <li data-i18n="ios1">Open the app link in Safari.</li>
+        <li data-i18n="ios2">Tap the Share button (square with an arrow).</li>
+        <li data-i18n="ios3">Scroll down and tap “Add to Home Screen”, then “Add”.</li>
+      </ol>
+    </section>
+    <section class="install-step" data-platform="desktop">
+      <h3 data-i18n="pfDesktop">Computer (Chrome or Edge)</h3>
+      <ol>
+        <li data-i18n="desk1">Open the app link.</li>
+        <li data-i18n="desk2">Click the install icon at the right end of the address bar, or “Install app” at the top of the page.</li>
+      </ol>
+    </section>
+
+    <div class="share-app">
+      <div id="appQr" class="app-qr" role="img" data-i18n-label="scanToOpen"></div>
+      <div>
+        <p class="hint" data-i18n="scanToOpen">Scan with another phone to open the app there.</p>
+        <p class="app-url" id="appUrl" dir="ltr"></p>
+        <button type="button" class="btn" id="copyAppUrl"><span data-i18n="copyLink">Copy link</span></button>
+      </div>
+    </div>
+    <p class="hint" data-i18n="installNote">Updates arrive by themselves. When you see “A new version is ready”, tap Reload.</p>
+  </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
