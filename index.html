@@ -498,6 +498,10 @@
                 <button type="button" class="btn btn-sm" id="exportHistoryBtn" hidden>
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
                   <span data-i18n="exportHistory">Export JSON</span></button>
+                <button type="button" class="btn btn-sm" id="importHistoryBtn">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></svg>
+                  <span data-i18n="importHistory">Restore backup</span></button>
+                <input type="file" id="importHistoryFile" accept="application/json,.json" hidden>
                 <button type="button" class="btn btn-ghost btn-sm btn-danger" id="clearHistory" data-i18n="clearHistory">Clear all</button>
               </div>
             </div>
@@ -518,6 +522,7 @@
             <ul class="history-list" id="historyList"></ul>
             <p class="hint center" id="historyEmpty" data-i18n="noHistory">No saved codes yet.</p>
             <p class="hint center" data-i18n="historyNote">History stays privately on this device only.</p>
+            <p class="hint center storage-note" id="storageNote" role="status"></p>
           </div>
         </section>
       </main>
@@ -570,6 +575,12 @@
       </div>
     </div>
     <p class="hint" data-i18n="installNote">Updates arrive by themselves. When you see “A new version is ready”, tap Reload.</p>
+    <div class="offline-copy" data-online-only>
+      <a class="btn" id="offlineCopyLink" href="qr-studio-offline.html" download="qr-studio-offline.html">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+        <span data-i18n="offlineCopy">Download offline copy</span></a>
+      <p class="hint" data-i18n="offlineCopyHint">One file that opens by double‑click on any computer or phone, with no internet.</p>
+    </div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -580,6 +591,7 @@
   <script src="vendor/html5-qrcode.min.js"></script>
   <script src="js/i18n.js"></script>
   <script src="js/payloads.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

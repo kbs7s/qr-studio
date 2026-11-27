@@ -1,6 +1,6 @@
 /* QR Studio service worker: precache the app shell so it works offline.
  * Bump VERSION whenever any cached file changes. */
-const VERSION = 'qr-studio-v5';
+const VERSION = 'qr-studio-v6';
 const ASSETS = [
   './',
   './index.html',
@@ -8,6 +8,7 @@ const ASSETS = [
   './css/app.css',
   './js/i18n.js',
   './js/payloads.js',
+  './js/storage.js',
   './js/app.js',
   './vendor/qrcode.min.js',
   './vendor/qr-code-styling.js',
@@ -18,7 +19,8 @@ const ASSETS = [
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/maskable-512.png',
-  './icons/apple-touch-icon.png'
+  './icons/apple-touch-icon.png',
+  './qr-studio-offline.html'
 ];
 
 self.addEventListener('install', (event) => {

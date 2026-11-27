@@ -213,7 +213,7 @@
       // history
       history: 'Saved History',
       clearHistory: 'Clear all',
-      exportHistory: 'Export JSON',
+      exportHistory: 'Export backup',
       historyExported: 'History exported',
       noHistory: 'No saved codes yet.',
       searchHistory: 'Search history…',
@@ -263,6 +263,13 @@
       scanToOpen: 'Scan with another phone to open the app there.',
       copyLink: 'Copy link',
       installNote: 'Updates arrive by themselves. When you see “A new version is ready”, tap Reload.',
+      importHistory: 'Restore backup',
+      historyImported: 'Restored {n} items from the backup',
+      importFailed: 'That file isn’t a QR Studio backup.',
+      storagePersistent: 'Saved permanently on this device.',
+      storageBestEffort: 'Saved on this device. The browser may clear it if storage runs low, so export a backup now and then.',
+      offlineCopy: 'Download offline copy',
+      offlineCopyHint: 'One file that opens by double‑click on any computer or phone, with no internet. Your history is kept separately in each copy.',
       footer: 'Everything runs locally on your device. Zero tracking, nothing uploaded.'
     },
 
@@ -468,7 +475,7 @@
 
       history: 'السجل المحفوظ',
       clearHistory: 'مسح الكل',
-      exportHistory: 'تصدير JSON',
+      exportHistory: 'تصدير نسخة احتياطية',
       historyExported: 'تم تصدير السجل',
       noHistory: 'لا يوجد شيء هنا بعد.',
       searchHistory: 'البحث في السجل…',
@@ -518,6 +525,13 @@
       scanToOpen: 'امسح الرمز بهاتف آخر لفتح التطبيق عليه.',
       copyLink: 'نسخ الرابط',
       installNote: 'تصل التحديثات تلقائياً. عندما ترى «يتوفر إصدار جديد» اضغط «إعادة التحميل».',
+      importHistory: 'استعادة نسخة احتياطية',
+      historyImported: 'تمت استعادة {n} عنصراً من النسخة الاحتياطية',
+      importFailed: 'هذا الملف ليس نسخة احتياطية من استوديو QR.',
+      storagePersistent: 'محفوظ بشكل دائم على هذا الجهاز.',
+      storageBestEffort: 'محفوظ على هذا الجهاز. قد يمسحه المتصفح إذا امتلأت الذاكرة، لذا صدّر نسخة احتياطية بين حين وآخر.',
+      offlineCopy: 'تنزيل نسخة تعمل بدون إنترنت',
+      offlineCopyHint: 'ملف واحد يفتح بالنقر عليه على أي حاسوب أو هاتف بدون إنترنت. يُحفظ السجل بشكل منفصل في كل نسخة.',
       footer: 'كل شيء يعمل محلياً على جهازك. بدون تتبّع ولا رفع لأي بيانات.'
     }
   };
