@@ -46,6 +46,16 @@ steps are inside the app under **How to install** (or open
 بعد التثبيت يعمل التطبيق بدون إنترنت ويتحدّث تلقائياً. تجد نفس الخطوات داخل التطبيق
 تحت **طريقة التثبيت**.
 
+## Use it with no internet at all · استخدامه بدون إنترنت نهائياً
+
+- **Installed app:** after the first visit everything is cached, so it opens and works offline.
+- **Single file:** download [`qr-studio-offline.html`](qr-studio-offline.html) (also in the app under **How to install**). Copy it to any phone, computer or USB stick and open it by double‑click. No internet, no server.
+- **Your data:** history and unfinished entries are saved in the browser's on‑device database (IndexedDB), never uploaded. Use **Export backup** / **Restore backup** in History to move it to another device or keep a copy.
+
+- **التطبيق المثبّت:** بعد أول زيارة يعمل بالكامل بدون إنترنت.
+- **ملف واحد:** نزّل [`qr-studio-offline.html`](qr-studio-offline.html) (موجود أيضاً داخل التطبيق في «طريقة التثبيت»)، وانسخه إلى أي هاتف أو حاسوب أو فلاشة وافتحه بالنقر عليه. لا يحتاج إنترنت ولا خادم.
+- **بياناتك:** يُحفظ السجل والمدخلات غير المكتملة في قاعدة بيانات المتصفح على جهازك ولا تُرفع أبداً. استخدم «تصدير نسخة احتياطية» و«استعادة نسخة احتياطية» في السجل لنقلها إلى جهاز آخر.
+
 ## What it does · الميزات
 
 **Create · إنشاء**
@@ -107,5 +117,7 @@ Ideas also came from [segno](https://github.com/heuer/segno),
 | `js/app.js` | generator, scanner, install logic |
 | `js/payloads.js` | building and parsing Wi‑Fi / vCard / mailto / SMS / geo payloads |
 | `js/i18n.js` | Arabic and English strings |
+| `js/storage.js` | on‑device database for history (IndexedDB, localStorage fallback) |
 | `sw.js` | offline cache (bump `VERSION` when files change) |
+| `tools/build-offline.py` | rebuilds `qr-studio-offline.html`; run it after changing any app file |
 | `manifest.webmanifest`, `icons/` | install metadata |

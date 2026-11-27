@@ -650,3 +650,5 @@ html[dir="rtl"] .history-item .h-title { text-align: right; }
 .app-qr { width: 132px; height: 132px; flex: none; }
 .app-qr canvas { width: 100% !important; height: 100% !important; border-radius: 8px; }
 .app-url { margin: 0; font-weight: 600; overflow-wrap: anywhere; font-size: .88rem; }
+.storage-note.ok { color: var(--ok-text); }
+.offline-copy { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; border-top: 1px solid var(--border); padding-top: 12px; margin-top: 10px; }

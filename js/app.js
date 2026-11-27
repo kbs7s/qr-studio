@@ -181,6 +181,28 @@
     return v;
   }
 
+  // Unfinished form entries are remembered per type, so nothing typed is lost
+  // when the app is closed. They stay on this device only.
+  var DRAFT_KEY = 'qrstudio.drafts';
+  var saveDraftSoon = debounce(function () {
+    var drafts = readJSON(DRAFT_KEY) || {};
+    drafts[currentType] = formValues();
+    store(DRAFT_KEY, JSON.stringify(drafts));
+  }, 300);
+  function restoreDrafts() {
+    var drafts = readJSON(DRAFT_KEY) || {};
+    Object.keys(drafts).forEach(function (type) {
+      var fs = form.querySelector('fieldset[data-form="' + type + '"]');
+      if (!fs || !drafts[type]) return;
+      fs.querySelectorAll('input[name], textarea[name], select[name]').forEach(function (i) {
+        if (!(i.name in drafts[type])) return;
+        if (i.type === 'checkbox') i.checked = !!drafts[type][i.name]; else i.value = drafts[type][i.name];
+      });
+    });
+  }
+  form.addEventListener('input', function () { saveDraftSoon(); });
+  form.addEventListener('change', function () { saveDraftSoon(); });
+
   function payload() { return Payloads.build[currentType](formValues()); }
 
   form.addEventListener('change', function () { render(); });
@@ -1194,17 +1216,25 @@
   // ---------------------------------------------------------------------------
   // HISTORY (with pinning, stats, JSON backup, live badge)
   // ---------------------------------------------------------------------------
-  var HISTORY_KEY = 'qrstudio.history', HISTORY_MAX = 100;
+  // History lives in the on-device database (see js/storage.js).
+  var HISTORY_KEY = 'qrstudio.history', HISTORY_MAX = 500;
   var historyFilter = 'all';
 
-  function loadHistory() { var h = readJSON(HISTORY_KEY); return Array.isArray(h) ? h : []; }
+  function loadHistory() { var h = LocalStore.get(HISTORY_KEY); return Array.isArray(h) ? h.slice() : []; }
+  var askedPersist = false;
   function saveHistory(list) {
-    while (list.length) {
-      try { localStorage.setItem(HISTORY_KEY, JSON.stringify(list)); syncHistoryBadge(list); return; }
-      catch (e) { if (list.length === 1) return; list = list.slice(0, Math.floor(list.length * 0.8)); }
-    }
-    store(HISTORY_KEY, null);
-    syncHistoryBadge([]);
+    LocalStore.set(HISTORY_KEY, list.length ? list : undefined);
+    syncHistoryBadge(list);
+    // The first time something is saved, ask the browser to keep our data for good.
+    if (list.length && !askedPersist) { askedPersist = true; LocalStore.persist().then(updateStorageNote); }
+  }
+  function updateStorageNote() {
+    var note = $('storageNote');
+    if (!note) return;
+    LocalStore.persisted().then(function (yes) {
+      note.textContent = t(yes ? 'storagePersistent' : 'storageBestEffort');
+      note.classList.toggle('ok', yes);
+    });
   }
   function syncHistoryBadge(list) {
     list = list || loadHistory();
@@ -1308,6 +1338,7 @@
     $('historyEmpty').hidden = list.length > 0;
     $('clearHistory').hidden = all.length === 0;
     $('exportHistoryBtn').hidden = all.length === 0;
+    updateStorageNote();
   }
 
   function openHistory(h) {
@@ -1340,11 +1371,54 @@
     });
   });
 
+  // Backup: a JSON file with the history and the current design settings.
   $('exportHistoryBtn').addEventListener('click', function () {
     var data = loadHistory();
     if (!data.length) return;
-    downloadBlob(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }), 'qr-studio-history-' + new Date().toISOString().slice(0, 10) + '.json');
+    var backup = { app: 'qr-studio', version: 2, exportedAt: new Date().toISOString(), history: data, style: readJSON('qrstudio.style') };
+    downloadBlob(new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' }), 'qr-studio-backup-' + new Date().toISOString().slice(0, 10) + '.json');
     toast(t('historyExported'));
+  });
+
+  // Restore: accepts this backup format and the older plain-array export. Merges,
+  // so nothing already on the device is lost; the newer copy of a duplicate wins.
+  $('importHistoryBtn').addEventListener('click', function () { $('importHistoryFile').click(); });
+  $('importHistoryFile').addEventListener('change', function (e) {
+    var f = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (!f) return;
+    f.text().then(function (txt) {
+      var parsed = JSON.parse(txt);
+      var incoming = Array.isArray(parsed) ? parsed : (parsed && Array.isArray(parsed.history) ? parsed.history : null);
+      if (!incoming) throw new Error('not a backup');
+      var clean = incoming.filter(function (h) {
+        return h && typeof h.text === 'string' && h.text.length <= 8000 && (h.mode === 'scan' || h.mode === 'create');
+      }).map(function (h) {
+        return {
+          id: typeof h.id === 'string' ? h.id.slice(0, 40) : Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
+          mode: h.mode, text: h.text,
+          ts: typeof h.ts === 'number' ? h.ts : Date.now(),
+          format: typeof h.format === 'string' ? h.format.slice(0, 40) : '',
+          type: typeof h.type === 'string' ? h.type.slice(0, 20) : undefined,
+          fields: h.fields && typeof h.fields === 'object' ? h.fields : undefined,
+          pinned: !!h.pinned
+        };
+      });
+      var byKey = {};
+      loadHistory().concat(clean).forEach(function (h) {
+        var k = h.mode + '\u0000' + h.text;
+        if (!byKey[k] || (h.ts || 0) > (byKey[k].ts || 0)) byKey[k] = Object.assign({}, h, { pinned: !!(h.pinned || (byKey[k] && byKey[k].pinned)) });
+      });
+      var merged = Object.keys(byKey).map(function (k) { return byKey[k]; })
+        .sort(function (a, b) { return (b.ts || 0) - (a.ts || 0); }).slice(0, HISTORY_MAX);
+      saveHistory(merged);
+      if (parsed && parsed.style && typeof parsed.style === 'object' && !Array.isArray(parsed.style)) {
+        style = Object.assign({}, style, parsed.style);
+        syncStyleControls(); styleChanged();
+      }
+      renderHistory();
+      toast(t('historyImported', { n: clean.length }));
+    }).catch(function () { toast(t('importFailed')); });
   });
 
   var clearTimer = null;
@@ -1357,7 +1431,7 @@
     }
     clearTimeout(clearTimer);
     b.classList.remove('armed'); b.textContent = t('clearHistory');
-    store(HISTORY_KEY, null);
+    saveHistory([]);
     renderHistory();
   });
 
@@ -1386,7 +1460,11 @@
   });
 
   // Install guide dialog, with a QR code of the app's own address.
-  var APP_URL = location.origin + location.pathname.replace(/index\.html$/, '');
+  // Opened from a downloaded file there is no web address to share, so point to the live site.
+  var IS_FILE = location.protocol === 'file:';
+  var APP_URL = IS_FILE ? 'https://kbs7s.github.io/qr-studio/' : location.origin + location.pathname.replace(/index\.html$/, '');
+  // The offline copy is itself the download, so don't offer it again inside it.
+  if (IS_FILE) document.querySelectorAll('[data-online-only]').forEach(function (n) { n.hidden = true; });
   var appQr = null;
   function openInstallHelp() {
     var d = $('installDialog');
@@ -1458,6 +1536,13 @@
   syncStyleControls();
   setCamButton();
   syncHistoryBadge();
+  restoreDrafts();
+  if (typeof syncWifi === 'function') syncWifi();
+  // Once the on-device database has loaded, refresh anything that shows history.
+  LocalStore.ready.then(function () {
+    syncHistoryBadge();
+    if (!$('panel-history').hidden) renderHistory();
+  });
   var savedType = store('qrstudio.type');
   setType(Payloads.build[savedType] ? savedType : 'url');
   var hashTab = location.hash.slice(1);
